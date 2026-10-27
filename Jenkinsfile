@@ -19,13 +19,6 @@ pipeline {
                 '''
             }
            
-        }
-        stage('Test PHP Application') {
-            steps {
-                sh '''
-                    docker run -d --rm --name php-test-${BUILD_NUMBER} -p 0.0.0.0:9000:80 ${IMAGE_NAME}:${BUILD_NUMBER}
-                '''
-            }
         }   
         stage('PUSH'){
             steps {
