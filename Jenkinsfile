@@ -1,9 +1,8 @@
-
 pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = 'manoj9627/php-jenkins-demo'
+        IMAGE_NAME = 'tanay25/php-jenkins-demo'
         CONTAINER_NAME = 'php-jenkins-app'
         APP_PORT = '9000'
     }
@@ -12,7 +11,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/Manojyadav72/php_jenkins.git'
+                    url: 'https://github.com/tanay25/phpjenkins.git'
             }
         }
 
@@ -20,8 +19,8 @@ pipeline {
             steps {
                 sh '''
                     docker build \
-                      -t ${IMAGE_NAME}:${BUILD_NUMBER} \
-                      -t ${IMAGE_NAME}:latest .
+                        -t ${IMAGE_NAME}:${BUILD_NUMBER} \
+                        -t ${IMAGE_NAME}:latest .
                 '''
             }
         }
@@ -31,15 +30,15 @@ pipeline {
                 withCredentials([
                     usernamePassword(
                         credentialsId: 'dockerhub',
-                        usernameVariable: 'DOCKER_USERNAME',
-                        passwordVariable: 'DOCKER_PASSWORD'
+                        usernameVariable: 'DOCKERHUB_USER',
+                        passwordVariable: 'DOCKERHUB_PASSWORD'
                     )
                 ]) {
                     sh '''
-                        set -e
-
-                        echo "$DOCKER_PASSWORD" | docker login \
-                          -u "$DOCKER_USERNAME" --password-stdin
+                        echo "$DOCKERHUB_PASSWORD" | \
+                            docker login \
+                            -u "$DOCKERHUB_USER" \
+                            --password-stdin
 
                         docker push ${IMAGE_NAME}:${BUILD_NUMBER}
                         docker push ${IMAGE_NAME}:latest
@@ -56,10 +55,12 @@ pipeline {
                     docker rm -f ${CONTAINER_NAME} || true
 
                     docker run -d \
-                      --name ${CONTAINER_NAME} \
-                      --restart unless-stopped \
-                      -p ${APP_PORT}:80 \
-                      ${IMAGE_NAME}:${BUILD_NUMBER}
+                        --name ${CONTAINER_NAME} \
+                        --restart unless-stopped \
+                        -p ${APP_PORT}:80 \
+                        ${IMAGE_NAME}:${BUILD_NUMBER}
+
+                    docker ps
                 '''
             }
         }
