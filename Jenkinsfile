@@ -4,14 +4,14 @@ pipeline {
     environment {
         IMAGE_NAME = 'manoj9627/php-jenkins-demo'
         CONTAINER_NAME = 'php-jenkins-app'
-        APP_PORT = '9000'
+        APP_PORT = '5000'
     }
 
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/Manojyadav72/php_jenkins.git'
+                    url: 'https://github.com/Manojyadav72/Mysql_app_jenkins.git'
             }
         }
 
